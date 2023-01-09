@@ -1,0 +1,137 @@
+options { 
+    STATIC = true; // make parser methods static 
+    DEBUG_PARSER = false;
+    LOOKAHEAD = 1;
+} 
+
+/*
+  L -> "{" N "}"
+  N -> num ("," num)*
+  N ->
+*/
+
+ 
+PARSER_BEGIN(ExpParser) 
+public class ExpParser {
+  public static void main(String args[]) throws ParseException {
+  
+    
+ 
+   Exp e = new ExpParser(System.in).parse();
+   System.out.println( e + " ");
+
+   System.out.println("Simplified Version:");
+   SimpVisitor simp= new SimpVisitor();
+   System.out.println(simp.visit(e));
+      
+   System.out.println("Output:");
+   EvalVisitor eval= new EvalVisitor();
+   eval.visit((Exp)simp.visit(e));
+   
+   
+
+  }
+} 
+PARSER_END(ExpParser) 
+ 
+SKIP : { " " | "\n" | "\t" | "\r" } 
+
+
+// Exp:2*3+6-9/8*9
+/*
+E-> E-E
+E-> E+E 
+E-> E*E 
+E-> E/E 
+E -> numId | num | (E)
+soldan recursiveliği çıkarmak için
+
+E -> ["-","+"] T E'
+E'-> ("-","+") T E'
+E' ->
+T -> P T'
+T'->("*","/")P T'
+T' -> 
+P -> F ["^",P]
+F -> ("id"|"num"|"(" E ")")
+F -> Sin(
+
+
+*/
+
+
+
+
+TOKEN : /* OPERATORS */
+{
+    
+    <PLUS   : "+">
+  | <MINUS  : "-"> 
+  | <TIMES  : "*">
+  | <POWER  : "^">
+  | <ID     : "x">
+  | <NUM    : (["0"-"9"]) + ( ["0"-"9"])? > 
+  
+}
+
+
+
+Exp parse():
+{Exp e;}
+{ 
+e=E() <EOF>
+{return e;}
+
+}
+
+
+Exp E():
+{Exp e1,e2; int k=1;}
+{ 
+(<PLUS>|<MINUS> {k=-1;})? 
+  e1=T() { if (k<0) e1 = new Times(new Num(k), e1); }
+	(
+	 <PLUS>    e2=T() {e1= new Plus(e1,e2);} 
+	|<MINUS>   e2=T() {e1= new Minus(e1,e2);} 
+		
+	)*
+	{return e1;}
+ }
+ 
+Exp T():
+{Exp e1,e2;}
+{ 
+
+
+	 e1=P()
+	(
+	 <TIMES>   e2=P() {e1= new Times(e1,e2);}   
+	 
+	
+	)*
+	{return e1;}
+ }
+ 
+Exp P():
+{Exp e1,e2; int k=1;}
+{ 
+ 
+  e1=F() 
+	(
+	<POWER>  e2=P() {e1= new Power(e1,e2);}  
+	
+	)?
+	{return e1;}
+ }
+ 
+ 
+ 
+ 
+ 
+Exp F():
+{Exp e; Token t;}
+{ 
+	 t=<ID>{return new ID(t.image);}
+	| t=<NUM>{return new Num(Integer.parseInt(t.image));}
+
+}

@@ -1,0 +1,13 @@
+Üslü olarak verilen x'ler arası çarpma ve bölme işlemleri "işlem1,işlem2,işlem3,işlem4 ve işlem5.txt" adlı dosyalarda yazılmıştır.
+Bu projenin amacı bu işlemler sonucu ortaya çıkan en sade halin üs değerini ekrana vermektir
+ExpParser(v2) projesine göre üslü ifadede taban yalnızca x olmamakla birlikte hesaplama ve sadeleştirme için iki ayrı visitor metodu oluşturulmuştur
+
+javacc ExpParser.jj
+javac *.java
+java ExpParser < islem1.txt
+
+bu komutlarla proje çalıştırılabilir
+
+projeyi kullanmak için java'ya ve javacc parser'ına ihtiyacınız vardır
+
+javacc link: https://drive.google.com/file/d/1rY7HsGAE6Km3v7TN9EujRpwr3ft22V5v/view
